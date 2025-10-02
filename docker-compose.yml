@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+  mongo-db:
+    image: mongo
+    container_name: deloitte-commerce-mongo-db
+    restart: unless-stopped
+    mem_limit: 512m
+    mem_reservation: 128m
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: Administrator
+      MONGO_INITDB_ROOT_PASSWORD: manage
+    ports:
+      - 27018:27017
+    volumes:
+      - ./data/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - deloitte_commerce_data:/data/db
+
+  mongo-seed:
+    build:
+      context: ./data
+      no_cache: true
+    depends_on:
+      - mongo-db
+
+  mongo-express:
+    image: mongo-express
+    container_name: deloitte-commerce-mongo-express
+    depends_on:
+      - mongo-db
+    restart: unless-stopped
+    mem_limit: 128m
+    mem_reservation: 64m
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo-db
+      ME_CONFIG_MONGODB_ADMINUSERNAME: Administrator
+      ME_CONFIG_MONGODB_ADMINPASSWORD: manage
+      ME_CONFIG_BASICAUTH_USERNAME: Administrator
+      ME_CONFIG_BASICAUTH_PASSWORD: manage
+    ports:
+      - 8082:8081
+
+  deloitte-commerce-api:
+    build:
+      context: .
+    # image: sefiamor/deloitte-commerce-api
+    container_name: deloitte-commerce-api
+    restart: unless-stopped
+    mem_limit: 128m
+    mem_reservation: 64m
+    environment:
+      - NODE_ENV=development
+    ports:
+      - 3333:3333
+    depends_on:
+      - mongo-db
+
+volumes:
+  deloitte_commerce_data:

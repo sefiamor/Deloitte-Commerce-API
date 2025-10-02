@@ -1,0 +1,744 @@
+openapi: '3.0.2'
+info:
+  title: Deloitte Commerce API
+  version: 'latest'
+  description: |
+    Deloitte Commerce API is a modern, production-ready e-commerce backend designed to power online storefronts and omnichannel retail
+    experiences. It provides RESTful endpoints for catalog management, carts, checkout, orders, and customer profiles, and is built for 
+    scalability, security, and easy integration with third-party services such as payment gateways, shipping providers, and analytics platforms. 
+    With clear API documentation, built-in support for multi-warehouse inventory, promotions and pricing rules, and observability for monitoring 
+    and performance, Deloitte Commerce API enables development teams to deloittecommerce fast, reliable shopping experiences across web and mobile channels.
+
+  contact:
+    name: Deloitte
+
+servers:
+  - url: http://localhost:3333
+    description: local server
+
+tags:
+  - name: admin
+    description: |
+      Admin-only functions. The user must have been assigned the 
+      admin role.
+  - name: authentication
+    description: |
+      Authentication functions. These provide account signup, login 
+      and password reset capabilities.
+  - name: order
+    description: |
+      Order functions. These enable a user to create and view orders.
+  - name: product
+    description: |
+      Product functions. These enable public access to product information.
+  - name: user
+    description: |
+      User functions. These enable a user to manage their account information.
+  - name: system
+    description: |
+      System functions. Check the health of the API application.
+
+paths:
+  /admin/user:
+    get:
+      operationId: getUsers
+      description: Get a page of user accounts.
+      tags:
+        - admin
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          description: The page number
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+        - in: query
+          name: size
+          description: The page size
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Returns a page of user accounts.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/users'
+        '401':
+          description: Admin privileges required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+    post:
+      operationId: createUser
+      description: Create a new user account.
+      tags:
+        - admin
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user'
+      responses:
+        '200':
+          description: Returns the newly created user account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+        '401':
+          description: Admin privileges required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+    put:
+      operationId: updateUser
+      description: Updates a user account.
+      tags:
+        - admin
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user'
+      responses:
+        '200':
+          description: Returns the updated user account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+        '401':
+          description: Admin privileges required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /admin/user/{email}:
+    delete:
+      operationId: deleteUser
+      description: Deletes a user account.
+      tags:
+        - admin
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: email
+          description: The email address of the user to delete
+          required: true
+          schema:
+            type: string
+            example: overrillo0@redcross.org
+      responses:
+        '200':
+          description: Returns the updated user account.
+        '401':
+          description: Admin privileges required.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+    get:
+      operationId: getUser
+      description: Gets user account details.
+      tags:
+        - admin
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: email
+          description: The email address of the user to fetch.
+          required: true
+          schema:
+            type: string
+            example: overrillo0@redcross.org
+      responses:
+        '200':
+          description: Returns the user account details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+        '401':
+          description: Admin privileges required.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        '404':
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /auth/login:
+    post:
+      operationId: login
+      description: Log in and get a JWT token.
+      tags:
+        - authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/login'
+      responses:
+        '200':
+          description: Returns a JWT token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/token'
+        '401':
+          description: Login failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /auth/signup:
+    post:
+      operationId: signup
+      description: Sign up as a user.
+      tags:
+        - authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user'
+      responses:
+        '200':
+          description: User successfully signed up.
+        '400':
+          description: Failed to sign up the user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /auth/reset:
+    post:
+      operationId: requestPasswordReset
+      description: Request a password reset.
+      tags:
+        - authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: overrillo0@redcross.org
+      responses:
+        '200':
+          description: |
+            Password reset requested and one time password generated.
+        '404':
+          description: Unknown user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+    put:
+      operationId: resetPassword
+      description: Reset a user's password.
+      tags:
+        - authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: overrillo0@redcross.org
+                password:
+                  type: string
+                one_time_password:
+                  type: string
+      responses:
+        '200':
+          description: Password reset requested and one-time password generated.
+        '401':
+          description: Invalid one-time password.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /info:
+    get:
+      operationId: getAppInfo
+      description: Get the application build information.
+      tags:
+        - system
+      responses:
+        '200':
+          description: Returns build information for the application.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/build'
+  /health:
+    get:
+      operationId: getAppStatus
+      description: Get the system status of the application.
+      tags:
+        - system
+      responses:
+        '200':
+          description: Returns the system status for the application.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/status'
+  /metrics:
+    get:
+      operationId: getAppMetrics
+      description: Get status metrics for the application.
+      tags:
+        - system
+      responses:
+        '200':
+          description: Returns system metrics for the application.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/metrics'
+  /order:
+    get:
+      operationId: getOrders
+      description: Get all orders for the logged in user.
+      tags:
+        - order
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Returns the logged in user's orders.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orders'
+    post:
+      operationId: createOrder
+      description: Create a new order for the logged in user.
+      tags:
+        - order
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/order'
+        required: true
+      responses:
+        '200':
+          description: Returns the newly created order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/order'
+  /order/{orderNumber}:
+    get:
+      operationId: getOrder
+      description: Get the details for an order.
+      tags:
+        - order
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: orderNumber
+          description: The order number
+          example: 1
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Returns the order details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/order'
+        '404':
+          description: Product not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /product:
+    get:
+      operationId: getProducts
+      description: Get a page of products.
+      tags:
+        - product
+      parameters:
+        - in: query
+          name: page
+          description: The page number
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+        - in: query
+          name: size
+          description: The page size
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Returns a page of product information.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/products'
+  /product/{productNumber}:
+    get:
+      operationId: getProduct
+      description: Get the details for a product.
+      tags:
+        - product
+      parameters:
+        - in: path
+          name: productNumber
+          description: The product number
+          example: 1
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Returns a product's details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/product'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /user:
+    delete:
+      operationId: deleteAccount
+      description: Delete the currently logged in user.
+      tags:
+        - user
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: overrillo0@redcross.org
+      responses:
+        '200':
+          description: Returns the updated user's details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+        '403':
+          description: Forbidden to try and delete another user's account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+    get:
+      operationId: getAccount
+      description: Get the user details of the currently logged in user.
+      tags:
+        - user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Returns the logged in user's details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+    put:
+      operationId: updateAccount
+      description: Update the details of the currently logged in user.
+      tags:
+        - user
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user'
+      responses:
+        '200':
+          description: Returns the updated user's details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+        '403':
+          description: Forbidden to try and update another user's details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        All functions that require authentication use JWT tokens. 
+        You must first successfully log in via the /auth/login
+        endpoint, which will generate a JWT token for you to use 
+        in subsequent API calls.
+  schemas:
+    build:
+      type: object
+      properties:
+        name:
+          type: string
+          example: deloitte-commerce-api
+        description:
+          type: string
+          example: This is the Deloitte Commerce API
+        version:
+          type: string
+          example: 0.1.0
+    error:
+      type: object
+      properties:
+        status:
+          type: number
+        message:
+          type: string
+    login:
+      type: object
+      properties:
+        email:
+          type: string
+          example: overrillo0@redcross.org
+        password:
+          type: string
+          example: QkYvxNZUiP
+    metrics:
+      type: object
+      properties:
+        mem:
+          type: object
+          properties:
+            rss:
+              type: number
+              example: 77234176
+            heapTotal:
+              type: number
+              example: 26746880
+            heapUsed:
+              type: number
+              example: 24530936
+            external:
+              type: number
+              example: 20468016
+            arrayBuffers:
+              type: number
+              example: 18309858
+        uptime:
+          type: number
+          example: 8550.689037999
+    order:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 63ff4add4e649460c6bcd36b
+        number:
+          type: number
+          example: 112
+        user:
+          $ref: '#/components/schemas/user'
+        orderLines:
+          type: array
+          items:
+            type: object
+            properties:
+              product:
+                $ref: '#/components/schemas/product'
+              quantity:
+                type: number
+                example: 5
+    orders:
+      type: array
+      items:
+        $ref: '#/components/schemas/order'
+    product:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 63ee75d3af3b3774c258adfc
+        number:
+          type: number
+          example: 13
+        title:
+          type: string
+          example: |
+            Acer SB220Q bi 21.5 inches Full HD (1920 x 1080) IPS Ultra-Thin
+        price:
+          type: number
+          example: 599
+        description:
+          type: string
+          example: |
+            21. 5 inches Full HD (1920 x 1080) widescreen IPS display And Radeon 
+            free Sync technology. No compatibility for VESA Mount Refresh Rate: 
+            75Hz - Using HDMI port Zero-frame design | ultra-thin | 4ms response 
+            time | IPS panel Aspect ratio - 16: 9. Color Supported - 16. 7 
+            million colors. Brightness - 250 nit Tilt angle -5 degree to 15 degree. 
+            Horizontal viewing angle-178 degree. Vertical viewing angle-178 degree 
+            75 hertz
+        category:
+          type: string
+          example: electronics
+        image:
+          type: string
+          example: img/81QpkIctqPL._AC_SX679_.jpg
+        rating:
+          type: object
+          properties:
+            rate:
+              type: number
+              example: 2.9
+            count:
+              type: number
+              example: 250
+            _id:
+              type: string
+              example: 640314bd51a4d3c479478c4a
+    products:
+      type: object
+      properties:
+        page:
+          type: number
+          example: 1
+        size:
+          type: number
+          example: 1
+        total:
+          type: number
+          example: 20
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/product'
+    status:
+      type: object
+      properties:
+        status:
+          type: string
+          example: UP
+    token:
+      type: object
+      properties:
+        token:
+          type: string
+    user:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        _id:
+          type: string
+          example: 63ee75d34d5d8bb410043d7b
+        email:
+          type: string
+          example: overrillo0@redcross.org
+        password:
+          type: string
+        one_time_password:
+          type: string
+        role:
+          type: string
+          example: admin
+        first_name:
+          type: string
+          example: Odille
+        last_name:
+          type: string
+          example: Verrillo
+        address:
+          type: string
+          example: 9 Drewry Crossing
+        city:
+          type: string
+          example: Dongdu
+        country:
+          type: string
+          example: China
+        phone:
+          type: string
+          example: +86 (709) 713-0630
+        credit_card:
+          type: string
+          example: '4041378755377473'
+    users:
+      type: object
+      properties:
+        page:
+          type: number
+          example: 1
+        size:
+          type: number
+          example: 1
+        total:
+          type: number
+          example: 20
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/user'

@@ -1,0 +1,117 @@
+[
+  {
+    "email": "admin@deloittecommerce.api",
+    "password": "Deloitte-Pass",
+    "role": "admin"
+  },
+  {
+    "email": "overrillo0@redcross.org",
+    "password": "QkYvxNZUiP",
+    "first_name": "Odille",
+    "last_name": "Verrillo",
+    "address": "9 Drewry Crossing",
+    "city": "Dongdu",
+    "country": "China",
+    "phone": "+86 (709) 713-0630",
+    "credit_card": "4041378755377473"
+  },
+  {
+    "email": "lposthill1@sbwire.com",
+    "password": "qzZnN9",
+    "first_name": "Lianne",
+    "last_name": "Posthill",
+    "address": "0 Almo Crossing",
+    "city": "Cachoeiro de Itapemirim",
+    "country": "Brazil",
+    "phone": "+55 (728) 243-6352",
+    "credit_card": "677122572628216901"
+  },
+  {
+    "email": "pchampkin2@t.co",
+    "password": "VUAO7k",
+    "first_name": "Paxton",
+    "last_name": "Champkin",
+    "address": "4 Washington Alley",
+    "city": "Jarinu",
+    "country": "Brazil",
+    "phone": "+55 (893) 219-2296",
+    "credit_card": "560225802921827102"
+  },
+  {
+    "email": "nratcliffe3@digg.com",
+    "password": "gakOspiogfOa",
+    "first_name": "Noble",
+    "last_name": "Ratcliffe",
+    "address": "1 Anthes Circle",
+    "city": "Guiyang",
+    "country": "China",
+    "phone": "+86 (458) 779-9712",
+    "credit_card": "3568158993107386"
+  },
+  {
+    "email": "odettmar4@salon.com",
+    "password": "G3ysvS",
+    "first_name": "Olag",
+    "last_name": "Dettmar",
+    "address": "613 Pawling Parkway",
+    "city": "Ngulakan",
+    "country": "Indonesia",
+    "phone": "+62 (463) 783-9205",
+    "credit_card": "670620871276170051"
+  },
+  {
+    "email": "cdonnell5@desdev.cn",
+    "password": "sXKGv02YSZUQ",
+    "first_name": "Cash",
+    "last_name": "Donnell",
+    "address": "85 Towne Lane",
+    "city": "Tlogosadang",
+    "country": "Indonesia",
+    "phone": "+62 (820) 839-6842",
+    "credit_card": "3556941845323374"
+  },
+  {
+    "email": "hhalward6@google.nl",
+    "password": "mvypz8iGZzP",
+    "first_name": "Hillard",
+    "last_name": "Halward",
+    "address": "184 Twin Pines Terrace",
+    "city": "Taiqing",
+    "country": "China",
+    "phone": "+86 (176) 392-1903",
+    "credit_card": "3576336978821094"
+  },
+  {
+    "email": "tchrystie7@globo.com",
+    "password": "GPBYhmU",
+    "first_name": "Thea",
+    "last_name": "Chrystie",
+    "address": "180 Melrose Street",
+    "city": "Krasnosilka",
+    "country": "Ukraine",
+    "phone": "+380 (223) 424-6320",
+    "credit_card": "30420413406608"
+  },
+  {
+    "email": "aslane8@sciencedirect.com",
+    "password": "ihIAcbIBu8",
+    "first_name": "Annabela",
+    "last_name": "Slane",
+    "address": "386 Northland Terrace",
+    "city": "Huanxi",
+    "country": "China",
+    "phone": "+86 (790) 149-8371",
+    "credit_card": "30166561059711"
+  },
+  {
+    "email": "dyedall9@zdnet.com",
+    "password": "oVTyde",
+    "first_name": "Dag",
+    "last_name": "Yedall",
+    "address": "5674 Bowman Parkway",
+    "city": "Vyksa",
+    "country": "Russia",
+    "phone": "+7 (887) 626-9838",
+    "credit_card": "337941113723075"
+  }
+]
